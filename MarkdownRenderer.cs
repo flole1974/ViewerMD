@@ -28,6 +28,11 @@ public static class MarkdownRenderer
               img { max-width: 100%; }
               a { color: #0969da; }
             </style>
+            <script>
+              window.addEventListener('afterprint', function() {
+                window.chrome.webview.postMessage('printComplete');
+              });
+            </script>
             </head>
             <body>
             {{body}}

@@ -17,6 +17,8 @@ public partial class MainWindow : Window
         string markdown = await File.ReadAllTextAsync(path);
         string html = MarkdownRenderer.ToHtml(markdown);
         await WebView.EnsureCoreWebView2Async();
+        WebView.CoreWebView2.WebMessageReceived -= OnWebMessage;
+        WebView.CoreWebView2.WebMessageReceived += OnWebMessage;
         WebView.NavigateToString(html);
         Title = $"ViewerMD — {Path.GetFileName(path)}";
         PrintMenuItem.IsEnabled = true;
@@ -37,6 +39,12 @@ public partial class MainWindow : Window
     private void OnPrint(object sender, RoutedEventArgs e)
     {
         WebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.System);
+    }
+
+    private void OnWebMessage(object? sender, Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs e)
+    {
+        if (e.TryGetWebMessageAsString() == "printComplete")
+            MessageBox.Show("Printing complete.", "ViewerMD", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private void OnExit(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
