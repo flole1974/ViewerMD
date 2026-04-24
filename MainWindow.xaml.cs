@@ -19,6 +19,7 @@ public partial class MainWindow : Window
         await WebView.EnsureCoreWebView2Async();
         WebView.NavigateToString(html);
         Title = $"ViewerMD — {Path.GetFileName(path)}";
+        PrintMenuItem.IsEnabled = true;
     }
 
     private async void OnOpen(object sender, RoutedEventArgs e)
@@ -31,6 +32,11 @@ public partial class MainWindow : Window
 
         if (dialog.ShowDialog() == true)
             await LoadFileAsync(dialog.FileName);
+    }
+
+    private void OnPrint(object sender, RoutedEventArgs e)
+    {
+        WebView.CoreWebView2.ShowPrintUI(Microsoft.Web.WebView2.Core.CoreWebView2PrintDialogKind.System);
     }
 
     private void OnExit(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
